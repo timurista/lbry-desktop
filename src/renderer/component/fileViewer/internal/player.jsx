@@ -54,7 +54,7 @@ class MediaPlayer extends React.PureComponent {
       // controls: true,
       sources: [
         {
-          src: downloadPath,
+          src: `file://${downloadPath}`,
           type: contentType,
         },
       ],
@@ -137,181 +137,181 @@ class MediaPlayer extends React.PureComponent {
   }
 
   componentWillReceiveProps(next) {
-    const el = this.media.children[0];
-    if (!this.props.paused && next.paused && !el.paused) el.pause();
+    // const el = this.media.children[0];
+    // if (!this.props.paused && next.paused && !el.paused) el.pause();
   }
 
   componentDidUpdate() {
-    const { contentType, downloadCompleted } = this.props;
-    const { startedPlaying, fileSource } = this.state;
-
-    if (this.playableType() && !startedPlaying && downloadCompleted) {
-      const container = this.media.children[0];
-
-      if (MediaPlayer.MP3_CONTENT_TYPES.indexOf(contentType) > -1) {
-        this.renderAudio(this.media, true);
-      } else {
-        player.render(this.file(), container, {
-          autoplay: true,
-          controls: true,
-        });
-      }
-    } else if (this.fileType() && !fileSource && downloadCompleted) {
-      this.renderFile();
-    }
+    // const { contentType, downloadCompleted } = this.props;
+    // const { startedPlaying, fileSource } = this.state;
+    //
+    // if (this.playableType() && !startedPlaying && downloadCompleted) {
+    //   const container = this.media.children[0];
+    //
+    //   if (MediaPlayer.MP3_CONTENT_TYPES.indexOf(contentType) > -1) {
+    //     this.renderAudio(this.media, true);
+    //   } else {
+    //     player.render(this.file(), container, {
+    //       autoplay: true,
+    //       controls: true,
+    //     });
+    //   }
+    // } else if (this.fileType() && !fileSource && downloadCompleted) {
+    //   this.renderFile();
+    // }
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.togglePlayListener);
-    const mediaElement = this.media.children[0];
-    if (mediaElement) {
-      mediaElement.removeEventListener('click', this.togglePlayListener);
-    }
+    // document.removeEventListener('keydown', this.togglePlayListener);
+    // const mediaElement = this.media.children[0];
+    // if (mediaElement) {
+    //   mediaElement.removeEventListener('click', this.togglePlayListener);
+    // }
   }
 
   toggleFullScreen(event) {
-    const mediaElement = this.media.children[0];
-    if (mediaElement) {
-      if (document.webkitIsFullScreen) {
-        document.webkitExitFullscreen();
-      } else {
-        mediaElement.webkitRequestFullScreen();
-      }
-    }
+    // const mediaElement = this.media.children[0];
+    // if (mediaElement) {
+    //   if (document.webkitIsFullScreen) {
+    //     document.webkitExitFullscreen();
+    //   } else {
+    //     mediaElement.webkitRequestFullScreen();
+    //   }
+    // }
   }
 
   togglePlay(event) {
-    // ignore all events except click and spacebar keydown, or input events in a form control
-    if (
-      event.type === 'keydown' &&
-      (event.code !== 'Space' || event.target.tagName.toLowerCase() === 'input')
-    ) {
-      return;
-    }
-    event.preventDefault();
-    const mediaElement = this.media.children[0];
-    if (mediaElement) {
-      if (!mediaElement.paused) {
-        mediaElement.pause();
-      } else {
-        mediaElement.play();
-      }
-    }
+    // // ignore all events except click and spacebar keydown, or input events in a form control
+    // if (
+    //   event.type === 'keydown' &&
+    //   (event.code !== 'Space' || event.target.tagName.toLowerCase() === 'input')
+    // ) {
+    //   return;
+    // }
+    // event.preventDefault();
+    // const mediaElement = this.media.children[0];
+    // if (mediaElement) {
+    //   if (!mediaElement.paused) {
+    //     mediaElement.pause();
+    //   } else {
+    //     mediaElement.play();
+    //   }
+    // }
   }
 
   file() {
-    const { downloadPath, fileName } = this.props;
-
-    return {
-      name: fileName,
-      createReadStream: opts => fs.createReadStream(downloadPath, opts),
-    };
+    // const { downloadPath, fileName } = this.props;
+    //
+    // return {
+    //   name: fileName,
+    //   createReadStream: opts => fs.createReadStream(downloadPath, opts),
+    // };
   }
 
   playableType() {
-    const { mediaType } = this.props;
-
-    return ['audio', 'video'].indexOf(mediaType) !== -1;
+    // const { mediaType } = this.props;
+    //
+    // return ['audio', 'video'].indexOf(mediaType) !== -1;
   }
 
   supportedType() {
-    // Files supported by render-media
-    const { contentType, mediaType } = this.props;
-
-    return Object.values(player.mime).indexOf(contentType) !== -1;
+    // // Files supported by render-media
+    // const { contentType, mediaType } = this.props;
+    //
+    // return Object.values(player.mime).indexOf(contentType) !== -1;
   }
 
   fileType() {
-    // This files are supported using a custom viewer
-    const { mediaType } = this.props;
-
-    return MediaPlayer.FILE_MEDIA_TYPES.indexOf(mediaType) > -1;
+    // // This files are supported using a custom viewer
+    // const { mediaType } = this.props;
+    //
+    // return MediaPlayer.FILE_MEDIA_TYPES.indexOf(mediaType) > -1;
   }
 
   renderFile() {
-    // This is what render-media does with unplayable files
-    const { fileName, downloadPath, contentType, mediaType } = this.props;
-
-    // File to render
-    const fileSource = {
-      fileName,
-      contentType,
-      downloadPath,
-      fileType: path.extname(fileName).substring(1),
-    };
-
-    // Readable stream from file
-    fileSource.stream = opts => fs.createReadStream(downloadPath, opts);
-
-    // Blob url from stream
-    fileSource.blob = callback =>
-      toBlobURL(fs.createReadStream(downloadPath), contentType, callback);
-
-    // Update state
-    this.setState({ fileSource });
+    // // This is what render-media does with unplayable files
+    // const { fileName, downloadPath, contentType, mediaType } = this.props;
+    //
+    // // File to render
+    // const fileSource = {
+    //   fileName,
+    //   contentType,
+    //   downloadPath,
+    //   fileType: path.extname(fileName).substring(1),
+    // };
+    //
+    // // Readable stream from file
+    // fileSource.stream = opts => fs.createReadStream(downloadPath, opts);
+    //
+    // // Blob url from stream
+    // fileSource.blob = callback =>
+    //   toBlobURL(fs.createReadStream(downloadPath), contentType, callback);
+    //
+    // // Update state
+    // this.setState({ fileSource });
   }
 
   renderAudio(container, autoplay) {
-    if (container.firstChild) {
-      container.firstChild.remove();
-    }
-
-    // clear the container
-    const { downloadPath } = this.props;
-    const audio = document.createElement('audio');
-    audio.autoplay = autoplay;
-    audio.controls = true;
-    audio.src = downloadPath;
-    container.appendChild(audio);
+    // if (container.firstChild) {
+    //   container.firstChild.remove();
+    // }
+    //
+    // // clear the container
+    // const { downloadPath } = this.props;
+    // const audio = document.createElement('audio');
+    // audio.autoplay = autoplay;
+    // audio.controls = true;
+    // audio.src = downloadPath;
+    // container.appendChild(audio);
   }
 
   showLoadingScreen(isFileType, isPlayableType) {
-    const { mediaType } = this.props;
-    const { hasMetadata, unplayable, unsupported, fileSource } = this.state;
-
-    const loader = {
-      isLoading: false,
-      loadingStatus: null,
-    };
-
-    // Loading message
-    const noFileMessage = __('Waiting for blob.');
-    const noMetadataMessage = __('Waiting for metadata.');
-
-    // Error message
-    const unplayableMessage = __("Sorry, looks like we can't play this file.");
-    const unsupportedMessage = __("Sorry, looks like we can't preview this file.");
-
-    // Files
-    const isLoadingFile = !fileSource && isFileType;
-    const isUnsupported =
-      (mediaType === 'application' || !this.supportedType()) && !isFileType && !isPlayableType;
-
-    // Media (audio, video)
-    const isUnplayable = isPlayableType && unplayable;
-    const isLoadingMetadata = isPlayableType && (!hasMetadata && !unplayable);
-
-    // Show loading message
-    if (isLoadingFile || isLoadingMetadata) {
-      loader.loadingStatus = isFileType ? noFileMessage : noMetadataMessage;
-      loader.isLoading = true;
-
-      // Show unsupported error message
-    } else if (isUnsupported || isUnplayable) {
-      loader.loadingStatus = isUnsupported ? unsupportedMessage : unplayableMessage;
-    }
-
-    return loader;
+    // const { mediaType } = this.props;
+    // const { hasMetadata, unplayable, unsupported, fileSource } = this.state;
+    //
+    // const loader = {
+    //   isLoading: false,
+    //   loadingStatus: null,
+    // };
+    //
+    // // Loading message
+    // const noFileMessage = __('Waiting for blob.');
+    // const noMetadataMessage = __('Waiting for metadata.');
+    //
+    // // Error message
+    // const unplayableMessage = __("Sorry, looks like we can't play this file.");
+    // const unsupportedMessage = __("Sorry, looks like we can't preview this file.");
+    //
+    // // Files
+    // const isLoadingFile = !fileSource && isFileType;
+    // const isUnsupported =
+    //   (mediaType === 'application' || !this.supportedType()) && !isFileType && !isPlayableType;
+    //
+    // // Media (audio, video)
+    // const isUnplayable = isPlayableType && unplayable;
+    // const isLoadingMetadata = isPlayableType && (!hasMetadata && !unplayable);
+    //
+    // // Show loading message
+    // if (isLoadingFile || isLoadingMetadata) {
+    //   loader.loadingStatus = isFileType ? noFileMessage : noMetadataMessage;
+    //   loader.isLoading = true;
+    //
+    //   // Show unsupported error message
+    // } else if (isUnsupported || isUnplayable) {
+    //   loader.loadingStatus = isUnsupported ? unsupportedMessage : unplayableMessage;
+    // }
+    //
+    // return loader;
   }
 
   render() {
-    const { mediaType } = this.props;
-    const { fileSource } = this.state;
-
-    const isFileType = this.fileType();
-    const isFileReady = fileSource && isFileType;
-    const isPlayableType = this.playableType();
-    const { isLoading, loadingStatus } = this.showLoadingScreen(isFileType, isPlayableType);
+    // const { mediaType } = this.props;
+    // const { fileSource } = this.state;
+    //
+    // const isFileType = this.fileType();
+    // const isFileReady = fileSource && isFileType;
+    // const isPlayableType = this.playableType();
+    // const { isLoading, loadingStatus } = this.showLoadingScreen(isFileType, isPlayableType);
     // {loadingStatus && <LoadingScreen status={loadingStatus} spinner={isLoading} />}
     // {isFileReady && <FileRender source={fileSource} mediaType={mediaType} />}
     // <div

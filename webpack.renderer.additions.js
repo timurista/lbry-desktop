@@ -29,7 +29,7 @@ module.exports = {
     modules: [ELECTRON_RENDERER_PROCESS_ROOT, 'node_modules', __dirname],
     extensions: ['.js', '.jsx', '.scss'],
   },
-  plugins: isDev ? [
+  plugins: !isDev ? [
     new FilewatcherPlugin({
       watchFileRegex: [require.resolve('lbry-redux')],
     }),
