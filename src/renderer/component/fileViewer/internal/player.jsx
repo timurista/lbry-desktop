@@ -8,6 +8,7 @@ import toBlobURL from 'stream-to-blob-url';
 import FileRender from 'component/fileRender';
 import Thumbnail from 'component/common/thumbnail';
 import LoadingScreen from 'component/common/loading-screen';
+import videojs from 'video.js';
 
 class MediaPlayer extends React.PureComponent {
   static MP3_CONTENT_TYPES = ['audio/mpeg3', 'audio/mpeg'];
@@ -35,7 +36,7 @@ class MediaPlayer extends React.PureComponent {
   }
 
   componentDidMount() {
-    const container = this.media;
+    // const container = this.media;
     const {
       downloadCompleted,
       contentType,
@@ -44,71 +45,95 @@ class MediaPlayer extends React.PureComponent {
       position,
       claim,
       startedPlayingCb,
+      downloadPath,
     } = this.props;
-
-    const loadedMetadata = () => {
-      this.setState({ hasMetadata: true, startedPlaying: true });
-
-      if (startedPlayingCb) {
-        startedPlayingCb();
-      }
-      this.media.children[0].play();
+    console.log('content:', contentType);
+    console.log('path:', downloadPath);
+    const props = {
+      autoplay: true,
+      // controls: true,
+      sources: [
+        {
+          src: downloadPath,
+          type: contentType,
+        },
+      ],
     };
 
-    const renderMediaCallback = error => {
-      if (error) this.setState({ unplayable: true });
-    };
+    // instantiate Video.js
+    this.player = videojs(this.videoNode, props, function onPlayerReady() {
+      console.log('onPlayerReady', this);
+    });
 
-    // Handle fullscreen change for the Windows platform
-    const win32FullScreenChange = () => {
-      const win = remote.BrowserWindow.getFocusedWindow();
-      if (process.platform === 'win32') {
-        win.setMenu(document.webkitIsFullScreen ? null : remote.Menu.getApplicationMenu());
-      }
-    };
+    // const loadedMetadata = () => {
+    //   this.setState({ hasMetadata: true, startedPlaying: true });
+    //
+    //   if (startedPlayingCb) {
+    //     startedPlayingCb();
+    //   }
+    //   this.media.children[0].play();
+    // };
+    //
+    // const renderMediaCallback = error => {
+    //   if (error) this.setState({ unplayable: true });
+    // };
+    //
+    // // Handle fullscreen change for the Windows platform
+    // const win32FullScreenChange = () => {
+    //   const win = remote.BrowserWindow.getFocusedWindow();
+    //   if (process.platform === 'win32') {
+    //     win.setMenu(document.webkitIsFullScreen ? null : remote.Menu.getApplicationMenu());
+    //   }
+    // };
+    //
+    // // use renderAudio override for mp3
+    // if (MediaPlayer.MP3_CONTENT_TYPES.indexOf(contentType) > -1) {
+    //   this.renderAudio(container, null, false);
+    // }
+    // // Render custom viewer: FileRender
+    // else if (this.fileType()) {
+    //   downloadCompleted && this.renderFile();
+    // }
+    // // Render default viewer: render-media (video, audio, img, iframe)
+    // else {
+    //   player.append(
+    //     this.file(),
+    //     container,
+    //     { autoplay: true, controls: true },
+    //     renderMediaCallback.bind(this)
+    //   );
+    //   }
+    //
+    //   document.addEventListener('keydown', this.togglePlayListener);
+    //   const mediaElement = this.media.children[0];
+    //   if (mediaElement) {
+    //     if (position) {
+    //       mediaElement.currentTime = position;
+    //     }
+    //     mediaElement.addEventListener('timeupdate', () =>
+    //       this.props.savePosition(
+    //         claim.claim_id,
+    //         `${claim.txid}:${claim.nout}`,
+    //         mediaElement.currentTime
+    //       )
+    //     );
+    //     mediaElement.addEventListener('click', this.togglePlayListener);
+    //     mediaElement.addEventListener('loadedmetadata', loadedMetadata.bind(this), {
+    //       once: true,
+    //     });
+    //     mediaElement.addEventListener('webkitfullscreenchange', win32FullScreenChange.bind(this));
+    //     mediaElement.addEventListener('volumechange', () => {
+    //       changeVolume(mediaElement.volume);
+    //     });
+    //     mediaElement.volume = volume;
+    //     mediaElement.addEventListener('dblclick', this.toggleFullScreenVideo);
+    //   }
+  }
 
-    // use renderAudio override for mp3
-    if (MediaPlayer.MP3_CONTENT_TYPES.indexOf(contentType) > -1) {
-      this.renderAudio(container, null, false);
-    }
-    // Render custom viewer: FileRender
-    else if (this.fileType()) {
-      downloadCompleted && this.renderFile();
-    }
-    // Render default viewer: render-media (video, audio, img, iframe)
-    else {
-      player.append(
-        this.file(),
-        container,
-        { autoplay: true, controls: true },
-        renderMediaCallback.bind(this)
-      );
-    }
-
-    document.addEventListener('keydown', this.togglePlayListener);
-    const mediaElement = this.media.children[0];
-    if (mediaElement) {
-      if (position) {
-        mediaElement.currentTime = position;
-      }
-      mediaElement.addEventListener('timeupdate', () =>
-        this.props.savePosition(
-          claim.claim_id,
-          `${claim.txid}:${claim.nout}`,
-          mediaElement.currentTime
-        )
-      );
-      mediaElement.addEventListener('click', this.togglePlayListener);
-      mediaElement.addEventListener('loadedmetadata', loadedMetadata.bind(this), {
-        once: true,
-      });
-      mediaElement.addEventListener('webkitfullscreenchange', win32FullScreenChange.bind(this));
-      mediaElement.addEventListener('volumechange', () => {
-        changeVolume(mediaElement.volume);
-      });
-      mediaElement.volume = volume;
-      mediaElement.addEventListener('dblclick', this.toggleFullScreenVideo);
-    }
+  componentWillUnmount() {
+    // if (this.player) {
+    //   this.player.dispose()
+    // }
   }
 
   componentWillReceiveProps(next) {
@@ -287,18 +312,21 @@ class MediaPlayer extends React.PureComponent {
     const isFileReady = fileSource && isFileType;
     const isPlayableType = this.playableType();
     const { isLoading, loadingStatus } = this.showLoadingScreen(isFileType, isPlayableType);
+    // {loadingStatus && <LoadingScreen status={loadingStatus} spinner={isLoading} />}
+    // {isFileReady && <FileRender source={fileSource} mediaType={mediaType} />}
+    // <div
+    //   className={'content__view--container'}
+    //   style={{ opacity: isLoading ? 0 : 1 }}
+    //   ref={container => {
+    //     this.media = container;
+    //   }}
+    //   />
 
     return (
       <React.Fragment>
-        {loadingStatus && <LoadingScreen status={loadingStatus} spinner={isLoading} />}
-        {isFileReady && <FileRender source={fileSource} mediaType={mediaType} />}
-        <div
-          className={'content__view--container'}
-          style={{ opacity: isLoading ? 0 : 1 }}
-          ref={container => {
-            this.media = container;
-          }}
-        />
+        <div data-vjs-player>
+          <video ref={node => (this.videoNode = node)} className="video-js" />
+        </div>
       </React.Fragment>
     );
   }
