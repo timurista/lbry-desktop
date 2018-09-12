@@ -9,6 +9,7 @@ import FileRender from 'component/fileRender';
 import Thumbnail from 'component/common/thumbnail';
 import LoadingScreen from 'component/common/loading-screen';
 import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 
 class MediaPlayer extends React.PureComponent {
   static MP3_CONTENT_TYPES = ['audio/mpeg3', 'audio/mpeg'];
@@ -16,24 +17,30 @@ class MediaPlayer extends React.PureComponent {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      hasMetadata: false,
-      startedPlaying: false,
-      unplayable: false,
-      fileSource: null,
-    };
-
-    this.togglePlayListener = this.togglePlay.bind(this);
-    this.toggleFullScreenVideo = this.toggleFullScreen.bind(this);
+    // 
+    // this.state = {
+    //   hasMetadata: false,
+    //   startedPlaying: false,
+    //   unplayable: false,
+    //   fileSource: null,
+    // };
+    // 
+    // this.togglePlayListener = this.togglePlay.bind(this);
+    // this.toggleFullScreenVideo = this.toggleFullScreen.bind(this);
   }
 
   componentDidUpdate(nextProps) {
-    const el = this.refs.media.children[0];
-    if (this.props.playingUri && !nextProps.playingUri && !el.paused) {
-      el.pause();
-    }
+    // const el = this.refs.media.children[0];
+    // if (this.props.playingUri && !nextProps.playingUri && !el.paused) {
+    //   el.pause();
+    // }
   }
+
+componentWillUnmount() {
+  if (this.player) {
+    this.player.dispose()
+  }
+}
 
   componentDidMount() {
     // const container = this.media;
@@ -51,7 +58,7 @@ class MediaPlayer extends React.PureComponent {
     console.log('path:', downloadPath);
     const props = {
       autoplay: true,
-      // controls: true,
+      controls: true,
       sources: [
         {
           src: `file://${downloadPath}`,
