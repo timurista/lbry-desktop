@@ -1,5 +1,5 @@
-export function formatCredits(amount, precision) {
-  return amount.toFixed(precision || 1).replace(/\.?0+$/, '');
+export function formatCredits(amount) {
+  return amount; // amount.toFixed(precision || 1).replace(/\.?0+$/, '');
 }
 
 export function formatFullPrice(amount, precision = 1) {
