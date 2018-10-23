@@ -12,7 +12,6 @@ export default class Daemon {
   }
 
   launch() {
-    console.log('Launching daemon:', Daemon.path);
     this.subprocess = spawn(Daemon.path, ['start']);
 
     this.subprocess.stdout.on('data', data => console.log(`Daemon: ${data}`));

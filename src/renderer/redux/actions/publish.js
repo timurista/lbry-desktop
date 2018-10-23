@@ -19,6 +19,7 @@ import { doNavigate } from 'redux/actions/navigation';
 import fs from 'fs';
 import path from 'path';
 import { CC_LICENSES, COPYRIGHT, OTHER } from 'constants/licenses';
+import { creditsToString } from 'util/formatCredits';
 
 type Action = UpdatePublishFormAction | { type: ACTIONS.CLEAR_PUBLISH };
 type PromiseAction = Promise<Action>;
@@ -226,7 +227,10 @@ export const doPublish = (params: PublishParams) => (dispatch: Dispatch, getStat
   };
 
   if (fee) {
-    metadata.fee = fee;
+    metadata.fee = {
+      currency: fee.currency,
+      amount: creditsToString(fee.amount),
+    };
   }
 
   if (description) {
@@ -236,7 +240,7 @@ export const doPublish = (params: PublishParams) => (dispatch: Dispatch, getStat
   const publishPayload = {
     name,
     channel_id: channelId,
-    bid,
+    bid: creditsToString(bid),
     metadata,
   };
 

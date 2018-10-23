@@ -1,5 +1,7 @@
-export function formatCredits(amount) {
-  return amount; // amount.toFixed(precision || 1).replace(/\.?0+$/, '');
+export function formatCredits(amount, precision = 1) {
+  return parseFloat(amount)
+    .toFixed(precision || 1)
+    .replace(/\.?0+$/, '');
 }
 
 export function formatFullPrice(amount, precision = 1) {
@@ -18,4 +20,14 @@ export function formatFullPrice(amount, precision = 1) {
   }
 
   return parseFloat(quantity[0] + formated);
+}
+
+export function creditsToString(amount) {
+  let creditString = String(amount);
+
+  if (creditString.includes('.')) {
+    return creditString;
+  } else {
+    return `${creditString}.0`;
+  }
 }
